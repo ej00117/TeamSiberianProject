@@ -1,0 +1,8 @@
+# Tutorial followed: https://docs.docker.com/compose/gettingstarted/
+services:
+  web:
+    build: .
+    ports:
+      - "8000:5000"
+  redis:
+    image: "redis:alpine"
