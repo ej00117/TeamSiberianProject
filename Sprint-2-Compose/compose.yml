@@ -1,0 +1,34 @@
+services:
+  ghost:
+    image: ghost:latest
+    container_name: ghost_blog
+    restart: always
+    ports:
+      - "2368:2368"
+    environment:
+      url: http://localhost:2368
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: ghost
+      database__connection__password: ghost
+      database__connection__database: ghost
+    depends_on:
+      - db
+    volumes:
+      - ghost_data:/var/lib/ghost/content
+
+  db:
+    image: mysql:8.0
+    container_name: ghost_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ghost
+      MYSQL_PASSWORD: ghost
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  ghost_data:
+  db_data:
