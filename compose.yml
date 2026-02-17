@@ -1,0 +1,29 @@
+services:
+  db:
+    image: mariadb:11
+    container_name: mediawiki-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: mediawiki
+      MARIADB_USER: wikiuser
+      MARIADB_PASSWORD: wikisecret
+      MARIADB_ROOT_PASSWORD: rootsecret
+    volumes:
+      - db_data:/var/lib/mysql
+
+  mediawiki:
+    image: mediawiki:latest
+    container_name: mediawiki
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    volumes:
+      - wiki_images:/var/www/html/images
+      - ./LocalSettings.php:/var/www/html/LocalSettings.php:ro
+
+
+volumes:
+  db_data:
+  wiki_images:
