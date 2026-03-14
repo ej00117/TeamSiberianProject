@@ -35,6 +35,34 @@ services:
       - "8080:80"
     restart: unless-stopped
 
+  ackee_db:
+    image: mongo:5
+    container_name: ackee_db
+    volumes:
+      - ackee_db_data:/data/db
+    restart: unless-stopped
+
+  ackee_app:
+    image: electerious/ackee:latest
+    container_name: ackee_app
+    depends_on:
+      - ackee_db
+    environment:
+      - ACKEE_MONGODB=mongodb://ackee_db:27017/ackee
+      - ACKEE_USERNAME=admin
+      - ACKEE_PASSWORD=supersecret
+      - ACKEE_PORT=3000
+      - ACKEE_ALLOW_ORIGIN=*
+      - ACKEE_TRACKER_LOCAL_EVENTS=true
+
+    ports:
+      - "8082:3000"
+    volumes:
+      - ackee_data:/srv/ackee
+    restart: unless-stopped
+
 volumes:
   db_data:
   bookstack_data:
+  ackee_db_data:
+  ackee_data:
