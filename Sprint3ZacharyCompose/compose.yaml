@@ -8,7 +8,7 @@ services:
       - MYSQL_USER=admin
       - MYSQL_PASSWORD=supersecret
     volumes:
-      - db_data:/var/lib/mysql
+      - ./resources/bookstack_db:/var/lib/mysql
     ports:
       - "3307:3306"
     restart: unless-stopped
@@ -30,7 +30,7 @@ services:
       - APP_URL=http://localhost:8080
       - APP_KEY=base64:Gnka9bDDBnDrJmeBn7OgE5iJ4Y//sBUkFGgyBDWoYeQ=
     volumes:
-      - bookstack_data:/config
+      - ./resources/bookstack:/config
     ports:
       - "8080:80"
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
       - POSTGRES_USER=umami
       - POSTGRES_PASSWORD=umami_password
     volumes:
-      - umami_db_data:/var/lib/postgresql/data
+      - ./resources/umami_db:/var/lib/postgresql/data
     restart: unless-stopped
 
   umami:
@@ -53,12 +53,9 @@ services:
       - umami_db
     environment:
       - DATABASE_URL=postgresql://umami:umami_password@umami_db:5432/umami
-      - APP_SECRET=change_this_to_a_long_random_secret_please
+      - APP_SECRET=kadjkajdkoj1qdj1ojdkajdkjadkoj1kjdokjakdjo1jdko1jdkoajd
+    volumes:
+      - ./resources/umami:/app/data
     ports:
       - "3000:3000"
     restart: unless-stopped
-
-volumes:
-  db_data:
-  bookstack_data:
-  umami_db_data:
