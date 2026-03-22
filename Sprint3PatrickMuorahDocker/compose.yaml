@@ -8,7 +8,7 @@ services:
       - MYSQL_USER=admin
       - MYSQL_PASSWORD=supersecret
     volumes:
-      - db_data:/var/lib/mysql
+      - ./resources/bookstack_db:/var/lib/mysql
     ports:
       - "3307:3306"
     restart: unless-stopped
@@ -30,7 +30,7 @@ services:
       - APP_URL=http://localhost:8080
       - APP_KEY=base64:Gnka9bDDBnDrJmeBn7OgE5iJ4Y//sBUkfGgyBDWoYeQ=
     volumes:
-      - bookstack_data:/config
+      - ./resources/bookstack:/config
     ports:
       - "8080:80"
     restart: unless-stopped
@@ -39,7 +39,7 @@ services:
     image: mongo:5
     container_name: ackee_db
     volumes:
-      - ackee_db_data:/data/db
+      - ./resources/ackee_db:/data/db
     restart: unless-stopped
 
   ackee_app:
@@ -54,15 +54,8 @@ services:
       - ACKEE_PORT=3000
       - ACKEE_ALLOW_ORIGIN=*
       - ACKEE_TRACKER_LOCAL_EVENTS=true
-
     ports:
       - "8082:3000"
     volumes:
-      - ackee_data:/srv/ackee
+      - ./resources/ackee:/srv/ackee
     restart: unless-stopped
-
-volumes:
-  db_data:
-  bookstack_data:
-  ackee_db_data:
-  ackee_data:
