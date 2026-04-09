@@ -49,7 +49,10 @@ and run: docker compose up -d --build
 then once all the containers have started,
 
 open the umami dashboard and reopen (if necessary)
+
 CMD in the Sprint4Compose folder and run this command:
+
 docker exec -it traffic\_generator python /app/traffic.py
+
 continuously refresh umami to watch the views increase.
 
