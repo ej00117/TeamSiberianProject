@@ -27,7 +27,7 @@ services:
       - DB_DATABASE=bookstackdb
       - DB_USERNAME=admin
       - DB_PASSWORD=supersecret
-      - APP_URL=http://bookstack_app:80
+      - APP_URL=http://localhost:8080
       - APP_KEY=base64:Gnka9bDDBnDrJmeBn7OgE5iJ4Y//sBUkFGgyBDWoYeQ=
     volumes:
       - ./resources/bookstack:/config
