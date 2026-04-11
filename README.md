@@ -38,3 +38,16 @@ Password: password
 Email: admin  
 Password: umami
 
+
+
+# To Start Compose And Script
+
+Open project folder and run:
+docker compose up
+
+Wait for containers to start, then log into BookStack.
+
+Run:
+python traffic_generator.py
+
+Refresh Umami to see traffic increase.
