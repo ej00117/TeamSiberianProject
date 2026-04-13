@@ -44,7 +44,7 @@ Password: umami
 
 Inside the Sprint4Compose folder open CMD
 
-and run: docker compose up -d --build
+and run: docker compose up
 
 then once all the containers have started,
 
