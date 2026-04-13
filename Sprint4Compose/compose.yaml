@@ -1,0 +1,104 @@
+networks:
+  siberian:
+    name: siberian
+    driver: bridge
+
+services:
+  bookstack_db:
+    image: mysql:8.0
+    container_name: bookstack_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=supersecret
+      - MYSQL_DATABASE=bookstackdb
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=supersecret
+    volumes:
+      - ./resources/bookstack_db:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    restart: unless-stopped
+    networks:
+      - siberian
+
+  bookstack_app:
+    image: lscr.io/linuxserver/bookstack:latest
+    container_name: bookstack_app
+    depends_on:
+      - bookstack_db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - DB_HOST=bookstack_db
+      - DB_PORT=3306
+      - DB_DATABASE=bookstackdb
+      - DB_USERNAME=admin
+      - DB_PASSWORD=supersecret
+      - APP_URL=http://host.docker.internal:8080
+      - APP_KEY=base64:Gnka9bDDBnDrJmeBn7OgE5iJ4Y//sBUkFGgyBDWoYeQ=
+    volumes:
+      - ./resources/bookstack:/config
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    networks:
+      - siberian
+
+  umami_db:
+    image: postgres:15-alpine
+    container_name: umami_db
+    environment:
+      - POSTGRES_DB=umami
+      - POSTGRES_USER=umami
+      - POSTGRES_PASSWORD=umami_password
+    volumes:
+      - ./resources/umami_db:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - siberian
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: umami
+    depends_on:
+      - umami_db
+    environment:
+      - DATABASE_URL=postgresql://umami:umami_password@umami_db:5432/umami
+      - APP_SECRET=kadjkajdkoj1qdj1ojdkajdkjadkoj1kjdokjakdjo1jdko1jdkoajd
+      - PUBLIC_URL=http://host.docker.internal:3000
+    volumes:
+      - ./resources/umami:/app/data
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - siberian
+    
+  chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: chrome
+    shm_size: 2g
+    ports:
+      - "4444:4444"
+    networks:
+      - siberian
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  traffic_generator:
+    build: ./resources/traffic
+    container_name: traffic_generator
+    depends_on:
+      - bookstack_app
+      - umami
+      - chrome
+    volumes:
+      - ./resources/traffic:/app
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    networks:
+      - siberian
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
